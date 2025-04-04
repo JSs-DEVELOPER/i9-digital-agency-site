@@ -2,7 +2,11 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const Hero = () => {
+interface HeroProps {
+  onOpenAppointment: () => void;
+}
+
+const Hero = ({ onOpenAppointment }: HeroProps) => {
   return (
     <section 
       id="home" 
@@ -32,7 +36,10 @@ const Hero = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="btn-primary">
+              <Button 
+                className="btn-primary"
+                onClick={onOpenAppointment}
+              >
                 Agendar uma Consultoria
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
