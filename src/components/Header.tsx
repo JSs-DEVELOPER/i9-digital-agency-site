@@ -1,0 +1,90 @@
+
+import { useState, useEffect } from "react";
+import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const Header = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const navLinks = [
+    { name: "Início", href: "#home" },
+    { name: "Serviços", href: "#services" },
+    { name: "Sobre", href: "#about" },
+    { name: "Depoimentos", href: "#testimonials" },
+    { name: "Blog", href: "#blog" },
+    { name: "Contato", href: "#contact" }
+  ];
+
+  return (
+    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-white shadow-md py-3" : "bg-transparent py-5"}`}>
+      <div className="container mx-auto px-4 flex justify-between items-center">
+        <a href="#home" className="flex items-center">
+          <img 
+            src="https://i9empreendendo.com/wp-content/uploads/2024/10/i9logo-2_preview_rev_1.png" 
+            alt="i9 Agência" 
+            className="h-10 md:h-12" 
+          />
+        </a>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-8">
+          {navLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              className="text-gray-700 hover:text-i9-blue font-medium transition-colors"
+            >
+              {link.name}
+            </a>
+          ))}
+          <Button className="btn-primary">Agendar Consultoria</Button>
+        </nav>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden text-gray-700"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Mobile Navigation */}
+      {isMenuOpen && (
+        <nav className="md:hidden bg-white py-4 px-4 shadow-md">
+          <div className="flex flex-col gap-4">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className="text-gray-700 hover:text-i9-blue font-medium py-2 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {link.name}
+              </a>
+            ))}
+            <Button className="btn-primary mt-2">Agendar Consultoria</Button>
+          </div>
+        </nav>
+      )}
+    </header>
+  );
+};
+
+export default Header;
