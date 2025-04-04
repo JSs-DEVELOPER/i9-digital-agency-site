@@ -1,11 +1,37 @@
 
-import { Facebook, Instagram, Linkedin, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Twitter, Mail, Phone } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const Footer = () => {
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDate(new Date());
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  }, []);
+  
+  const formatDate = (date: Date): string => {
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    };
+    
+    return date.toLocaleDateString('pt-BR', options);
+  };
+  
   return (
     <footer className="bg-i9-dark text-white">
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div>
             <img 
               src="https://i9empreendendo.com/wp-content/uploads/2024/10/i9logo-2_preview_rev_1.png" 
@@ -54,38 +80,16 @@ const Footer = () => {
               <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Consultoria</a></li>
             </ul>
           </div>
-
-          <div>
-            <h3 className="text-lg font-semibold mb-6">Contato</h3>
-            <ul className="space-y-4">
-              <li className="flex items-start">
-                <Mail className="w-5 h-5 mr-3 text-i9-blue flex-shrink-0 mt-0.5" />
-                <a href="mailto:contato@i9empreendendo.com" className="text-gray-400 hover:text-white transition-colors">
-                  contato@i9empreendendo.com
-                </a>
-              </li>
-              <li className="flex items-start">
-                <Phone className="w-5 h-5 mr-3 text-i9-blue flex-shrink-0 mt-0.5" />
-                <a href="tel:+5500000000000" className="text-gray-400 hover:text-white transition-colors">
-                  +55 (00) 0000-0000
-                </a>
-              </li>
-              <li className="flex items-start">
-                <MapPin className="w-5 h-5 mr-3 text-i9-blue flex-shrink-0 mt-0.5" />
-                <span className="text-gray-400">
-                  Av. Principal, 1000<br />
-                  Centro, Cidade - Estado<br />
-                  CEP: 00000-000
-                </span>
-              </li>
-            </ul>
-          </div>
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} i9 Agência. Todos os direitos reservados.
-          </p>
+          <div className="mb-4 md:mb-0 text-center md:text-left">
+            <p className="text-gray-400">
+              &copy; {currentDate.getFullYear()} i9 Agência. Todos os direitos reservados.
+            </p>
+            <p className="text-gray-500 text-sm mt-1">{formatDate(currentDate)}</p>
+          </div>
+          
           <div className="flex gap-6">
             <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Política de Privacidade</a>
             <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Termos de Uso</a>

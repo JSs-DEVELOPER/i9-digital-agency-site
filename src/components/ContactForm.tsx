@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Clock, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const ContactForm = () => {
@@ -42,25 +42,26 @@ const ContactForm = () => {
   };
 
   return (
-    <section id="contact" className="bg-gray-50 py-16 md:py-24">
+    <section id="contact" className="py-16 md:py-24 relative">
+      <div className="absolute inset-0 bg-gray-50 dark:bg-gray-900/50 -z-10"></div>
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="inline-block px-4 py-2 rounded-full bg-i9-blue/10 text-i9-blue font-medium text-sm mb-4">
+          <span className="inline-block px-4 py-2 rounded-full bg-i9-blue/10 dark:bg-i9-blue/20 text-i9-blue font-medium text-sm mb-4">
             Contato
           </span>
-          <h2 className="section-title">Entre em contato conosco</h2>
-          <p className="section-subtitle">
+          <h2 className="section-title dark:text-white">Entre em contato conosco</h2>
+          <p className="section-subtitle dark:text-gray-300">
             Estamos prontos para ajudar seu negócio a crescer. Preencha o formulário abaixo ou utilize um de nossos canais de contato.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm p-8">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 border border-gray-100 dark:border-gray-700">
               <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Nome Completo*
                     </label>
                     <Input
@@ -75,7 +76,7 @@ const ContactForm = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       E-mail*
                     </label>
                     <Input
@@ -91,7 +92,7 @@ const ContactForm = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Telefone*
                     </label>
                     <Input
@@ -106,7 +107,7 @@ const ContactForm = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="company" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Empresa
                     </label>
                     <Input
@@ -120,7 +121,7 @@ const ContactForm = () => {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label htmlFor="service" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="service" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Serviço de Interesse*
                     </label>
                     <select
@@ -129,7 +130,7 @@ const ContactForm = () => {
                       value={formData.service}
                       onChange={handleChange}
                       required
-                      className="w-full rounded-md border border-gray-300 py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-i9-blue focus:border-transparent"
+                      className="w-full rounded-md border border-gray-300 dark:border-gray-600 py-2 px-3 text-gray-700 dark:text-gray-300 bg-background focus:outline-none focus:ring-2 focus:ring-i9-blue focus:border-transparent"
                     >
                       <option value="" disabled>Selecione um serviço</option>
                       <option value="SEO">SEO</option>
@@ -144,7 +145,7 @@ const ContactForm = () => {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Mensagem
                     </label>
                     <Textarea
@@ -191,45 +192,6 @@ const ContactForm = () => {
                     <h4 className="font-medium mb-1">Telefone</h4>
                     <a href="tel:+5500000000000" className="text-white/80 hover:text-white">
                       +55 (00) 0000-0000
-                    </a>
-                  </div>
-                </div>
-                
-                <div className="flex gap-4 items-start">
-                  <div className="bg-white/10 rounded-full p-2 mt-1">
-                    <MapPin className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-1">Endereço</h4>
-                    <p className="text-white/80">
-                      Av. Principal, 1000<br />
-                      Centro, Cidade - Estado<br />
-                      CEP: 00000-000
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-4 items-start">
-                  <div className="bg-white/10 rounded-full p-2 mt-1">
-                    <Clock className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-1">Horário de Atendimento</h4>
-                    <p className="text-white/80">
-                      Segunda a Sexta: 9h às 18h<br />
-                      Sábados: 9h às 12h
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-4 items-start">
-                  <div className="bg-white/10 rounded-full p-2 mt-1">
-                    <Calendar className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-1">Agende uma Reunião</h4>
-                    <a href="#" className="text-white underline hover:text-white/80">
-                      Clique aqui para agendar
                     </a>
                   </div>
                 </div>
