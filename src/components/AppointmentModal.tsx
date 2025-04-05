@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react"
-import { format } from "date-fns"
+import { format, isWeekend, isBefore, isAfter } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -20,6 +20,47 @@ interface AppointmentModalProps {
   onOpenChange: (open: boolean) => void
   services: { title: string }[]
   selectedService?: string
+}
+
+// Lista de feriados nacionais brasileiros (fixos e móveis para 2024/2025)
+const brazilianHolidays = [
+  new Date(2024, 0, 1),   // Ano Novo - 1º de Janeiro
+  new Date(2024, 1, 12),  // Carnaval 2024 - 12 de Fevereiro
+  new Date(2024, 1, 13),  // Carnaval 2024 - 13 de Fevereiro
+  new Date(2024, 2, 29),  // Sexta-feira Santa 2024 - 29 de Março
+  new Date(2024, 2, 31),  // Páscoa 2024 - 31 de Março
+  new Date(2024, 3, 21),  // Tiradentes - 21 de Abril
+  new Date(2024, 4, 1),   // Dia do Trabalho - 1º de Maio
+  new Date(2024, 4, 30),  // Corpus Christi 2024 - 30 de Maio
+  new Date(2024, 8, 7),   // Independência do Brasil - 7 de Setembro
+  new Date(2024, 9, 12),  // Nossa Senhora Aparecida - 12 de Outubro
+  new Date(2024, 10, 2),  // Finados - 2 de Novembro
+  new Date(2024, 10, 15), // Proclamação da República - 15 de Novembro
+  new Date(2024, 11, 25), // Natal - 25 de Dezembro
+  
+  // 2025
+  new Date(2025, 0, 1),   // Ano Novo - 1º de Janeiro
+  new Date(2025, 2, 3),   // Carnaval 2025 - 3 de Março
+  new Date(2025, 2, 4),   // Carnaval 2025 - 4 de Março
+  new Date(2025, 3, 18),  // Sexta-feira Santa 2025 - 18 de Abril
+  new Date(2025, 3, 20),  // Páscoa 2025 - 20 de Abril
+  new Date(2025, 3, 21),  // Tiradentes - 21 de Abril
+  new Date(2025, 4, 1),   // Dia do Trabalho - 1º de Maio
+  new Date(2025, 5, 19),  // Corpus Christi 2025 - 19 de Junho
+  new Date(2025, 8, 7),   // Independência do Brasil - 7 de Setembro
+  new Date(2025, 9, 12),  // Nossa Senhora Aparecida - 12 de Outubro
+  new Date(2025, 10, 2),  // Finados - 2 de Novembro
+  new Date(2025, 10, 15), // Proclamação da República - 15 de Novembro
+  new Date(2025, 11, 25), // Natal - 25 de Dezembro
+];
+
+// Função para verificar se uma data é feriado
+const isHoliday = (date: Date): boolean => {
+  return brazilianHolidays.some(holiday => 
+    date.getDate() === holiday.getDate() && 
+    date.getMonth() === holiday.getMonth() && 
+    date.getFullYear() === holiday.getFullYear()
+  );
 }
 
 export const AppointmentModal = ({ open, onOpenChange, services, selectedService = "" }: AppointmentModalProps) => {
@@ -50,9 +91,16 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
     setFormData(prev => ({ ...prev, [name]: value }))
   }
   
+  // Verifica se a data deve ser desabilitada (fim de semana, data passada ou feriado)
   const isDateDisabled = (date: Date) => {
-    const day = date.getDay()
-    return day === 0 || day === 6 // Disallow weekends (0 = Sunday, 6 = Saturday)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Resetar horas para comparação apenas de datas
+    
+    return (
+      isWeekend(date) || // Desabilitar fins de semana (sábado e domingo)
+      isBefore(date, today) || // Desabilitar datas passadas
+      isHoliday(date) // Desabilitar feriados
+    );
   }
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -62,6 +110,21 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
       toast({
         title: "Erro",
         description: "Selecione uma data e horário para o agendamento",
+        variant: "destructive"
+      })
+      return
+    }
+    
+    // Verificar se é uma data passada
+    const now = new Date();
+    const selectedDate = new Date(date);
+    const [hours, minutes] = timeSlot.split(':').map(Number);
+    selectedDate.setHours(hours, minutes, 0, 0);
+    
+    if (isBefore(selectedDate, now)) {
+      toast({
+        title: "Erro",
+        description: "Não é possível agendar para uma data/hora no passado",
         variant: "destructive"
       })
       return
@@ -186,12 +249,15 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
             <div className="space-y-4">
               <div>
                 <h3 className="text-sm font-medium mb-2">Selecione uma data*</h3>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Fins de semana, feriados nacionais e datas no passado não estão disponíveis
+                </p>
                 <Calendar
                   mode="single"
                   selected={date}
                   onSelect={setDate}
                   disabled={isDateDisabled}
-                  className="border rounded-md p-3"
+                  className="border rounded-md p-3 pointer-events-auto"
                 />
               </div>
               
@@ -199,16 +265,28 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
                 <div>
                   <h3 className="text-sm font-medium mb-2">Selecione um horário*</h3>
                   <div className="grid grid-cols-3 gap-2">
-                    {availableTimes.map((time) => (
-                      <Button
-                        key={time}
-                        type="button"
-                        variant={timeSlot === time ? "default" : "outline"}
-                        onClick={() => setTimeSlot(time)}
-                      >
-                        {time}
-                      </Button>
-                    ))}
+                    {availableTimes.map((time) => {
+                      const today = new Date();
+                      const selectedDate = new Date(date);
+                      const [hours, minutes] = time.split(':').map(Number);
+                      selectedDate.setHours(hours, minutes, 0, 0);
+                      
+                      // Desabilitar horários passados para o dia atual
+                      const isPastTime = isBefore(selectedDate, today);
+                      
+                      return (
+                        <Button
+                          key={time}
+                          type="button"
+                          variant={timeSlot === time ? "default" : "outline"}
+                          onClick={() => !isPastTime && setTimeSlot(time)}
+                          disabled={isPastTime}
+                          className={isPastTime ? "opacity-50" : ""}
+                        >
+                          {time}
+                        </Button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
