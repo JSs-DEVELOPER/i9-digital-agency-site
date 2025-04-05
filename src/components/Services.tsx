@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { 
   SearchIcon, BarChart3, MonitorSmartphone, LineChart, MessageSquare, 
@@ -577,41 +578,45 @@ const Services = () => {
         <span className="inline-block px-4 py-2 rounded-full bg-i9-blue/10 dark:bg-i9-blue/20 text-i9-blue font-medium text-sm mb-4">
           Nossos Serviços
         </span>
-        <h2 className="section-title">Soluções completas para seu negócio digital</h2>
+        {/* Title removed as requested */}
         <p className="section-subtitle dark:text-gray-300">
           Oferecemos um conjunto abrangente de serviços de marketing digital para impulsionar sua marca e gerar resultados mensuráveis.
         </p>
       </div>
 
       <div className="mt-12 px-4" ref={carouselRef}>
-        <Carousel
-          opts={{
-            align: "start",
-            loop: true,
-          }}
-          className="w-full"
-        >
-          <CarouselContent>
-            {serviceData.slice(0, 12).map((service, index) => (
-              <CarouselItem key={index} className="md:basis-1/3 lg:basis-1/4">
-                <div 
-                  className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-gray-700 hover:border-i9-blue/20 dark:hover:border-i9-blue/40 group h-full cursor-pointer"
-                  onClick={() => handleServiceClick(service)}
-                >
-                  <div className="bg-i9-blue/10 dark:bg-i9-blue/20 rounded-full p-3 w-12 h-12 flex items-center justify-center mb-4 group-hover:bg-i9-blue group-hover:text-white transition-all">
-                    <service.icon className="w-6 h-6 text-i9-blue group-hover:text-white" />
+        <div className="relative">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent>
+              {serviceData.map((service, index) => (
+                <CarouselItem key={index} className="md:basis-1/3 lg:basis-1/4">
+                  <div 
+                    className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-gray-700 hover:border-i9-blue/20 dark:hover:border-i9-blue/40 group h-full cursor-pointer"
+                    onClick={() => handleServiceClick(service)}
+                  >
+                    <div className="bg-i9-blue/10 dark:bg-i9-blue/20 rounded-full p-3 w-12 h-12 flex items-center justify-center mb-4 group-hover:bg-i9-blue group-hover:text-white transition-all">
+                      <service.icon className="w-6 h-6 text-i9-blue group-hover:text-white" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300">{service.description}</p>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-300">{service.description}</p>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <div className="flex justify-center mt-8 gap-4">
-            <CarouselPrevious className="static transform-none" />
-            <CarouselNext className="static transform-none" />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+          
+          {/* Positioned navigation buttons at the same height as the service blocks */}
+          <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between px-2 z-10 pointer-events-none">
+            <CarouselPrevious className="relative pointer-events-auto" />
+            <CarouselNext className="relative pointer-events-auto" />
           </div>
-        </Carousel>
+        </div>
       </div>
 
       <div className="mt-16 text-center">

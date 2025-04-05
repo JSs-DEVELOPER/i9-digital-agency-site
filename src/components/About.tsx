@@ -47,9 +47,7 @@ const About = () => {
             <span className="inline-block px-4 py-2 rounded-full bg-i9-blue/10 dark:bg-i9-blue/20 text-i9-blue font-medium text-sm mb-4">
               Sobre a i9 Agência
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 dark:text-white">
-              Uma agência focada em resultados tangíveis para seu negócio
-            </h2>
+            {/* Section title removed as requested */}
             <p className="text-gray-600 dark:text-gray-300 mb-8">
               A i9 Agência nasceu com o propósito de transformar negócios através do marketing digital de alta performance. Com anos de experiência e centenas de cases de sucesso, nossa equipe é especializada em desenvolver estratégias personalizadas que geram resultados reais e mensuráveis.
             </p>
