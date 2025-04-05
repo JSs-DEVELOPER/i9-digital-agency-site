@@ -3,7 +3,11 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
-export const CookieConsent = () => {
+interface CookieConsentProps {
+  onAccept?: () => void;
+}
+
+export const CookieConsent = ({ onAccept }: CookieConsentProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -17,6 +21,9 @@ export const CookieConsent = () => {
   const handleAccept = () => {
     localStorage.setItem("cookieConsent", "true");
     setIsVisible(false);
+    if (onAccept) {
+      onAccept();
+    }
   };
 
   const handleDecline = () => {

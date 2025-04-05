@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar, ChevronRight, Linkedin, Mail, Share2 } from "lucide-react";
@@ -14,6 +15,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { BlogPost } from "@/types/BlogPost";
 
 const blogPosts = [
   // ... keep existing blog posts data
