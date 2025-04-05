@@ -1,6 +1,5 @@
 
 import { Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const About = () => {
   const benefits = [
@@ -26,16 +25,17 @@ const About = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="order-2 lg:order-1">
             <div className="relative">
-              <div className="relative z-10 rounded-xl overflow-hidden shadow-xl transform transition-transform hover:scale-[1.02] duration-500">
-                <img 
-                  src="https://i9empreendendo.com/wp-content/uploads/2024/10/office-marketing-team.jpg" 
-                  alt="Equipe i9 Agência"
-                  className="w-full h-auto object-cover" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6">
-                  <h3 className="text-white text-xl font-bold">Nossa Equipe</h3>
-                  <p className="text-white/90 text-sm">Profissionais especializados em transformar seu negócio digital</p>
-                </div>
+              <div className="relative z-10 rounded-xl overflow-hidden shadow-xl transform transition-transform duration-500">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="w-full h-auto object-cover"
+                >
+                  <source src="https://i9empreendendo.com/wp-content/uploads/2024/10/marketing-team.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </div>
               
               <div className="absolute -bottom-6 -right-6 w-48 h-48 bg-i9-blue rounded-full opacity-20 z-0 animate-pulse"></div>
@@ -63,10 +63,6 @@ const About = () => {
                   <span className="text-gray-700 dark:text-gray-200">{benefit}</span>
                 </div>
               ))}
-            </div>
-            
-            <div className="mt-8">
-              <Button className="btn-primary">Conheça Nossa Equipe</Button>
             </div>
           </div>
         </div>

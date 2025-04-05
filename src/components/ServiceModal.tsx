@@ -23,9 +23,10 @@ interface ServiceModalProps {
   service: ServiceDetailProps
   open: boolean
   onOpenChange: (open: boolean) => void
+  onRequestQuote?: () => void
 }
 
-export const ServiceModal = ({ service, open, onOpenChange }: ServiceModalProps) => {
+export const ServiceModal = ({ service, open, onOpenChange, onRequestQuote }: ServiceModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl w-[90vw] max-h-[85vh] overflow-y-auto">
@@ -52,7 +53,12 @@ export const ServiceModal = ({ service, open, onOpenChange }: ServiceModalProps)
             </div>
 
             <div className="mt-6">
-              <Button className="w-full btn-primary">Solicitar Proposta</Button>
+              <Button 
+                className="w-full btn-primary"
+                onClick={onRequestQuote}
+              >
+                Solicitar Proposta
+              </Button>
             </div>
           </div>
           

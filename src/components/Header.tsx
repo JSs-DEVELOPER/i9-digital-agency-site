@@ -8,14 +8,38 @@ import { ServiceDetailProps } from "@/components/ServiceModal";
 
 // Define service types for the appointment modal
 const services = [
-  { title: "SEO" },
-  { title: "Google Ads" },
-  { title: "Redes Sociais" },
-  { title: "Marketing de Conteúdo" },
-  { title: "Copywriting" },
-  { title: "Facebook Ads" },
-  { title: "Desenvolvimento Web" },
   { title: "Análise de Dados" },
+  { title: "Aplicativos Móveis e Desenvolvimento de Soluções Digitais" },
+  { title: "Automação de Marketing" },
+  { title: "Branding Digital" },
+  { title: "Consultoria de Marketing Digital" },
+  { title: "Copywriting" },
+  { title: "Desenvolvimento Web" },
+  { title: "Desenvolvimento de Site e Landing Pages" },
+  { title: "Design Gráfico e Criação Visual" },
+  { title: "Email Marketing" },
+  { title: "Estratégias de Expansão Internacional (Global Marketing)" },
+  { title: "Facebook Ads" },
+  { title: "Gestão de Campanhas de Publicidade em Vídeo" },
+  { title: "Gestão de Comunidades Online" },
+  { title: "Gestão de Reputação Online (ORM)" },
+  { title: "Gestão de Tráfego Pago" },
+  { title: "Google Ads" },
+  { title: "Google Analytics e Relatórios de Dados" },
+  { title: "Influencer Marketing" },
+  { title: "Instagram Ads" },
+  { title: "LinkedIn Ads" },
+  { title: "Marketing de Afiliados" },
+  { title: "Marketing de Conteúdo" },
+  { title: "Marketing Imobiliário" },
+  { title: "Marketing para eCommerce" },
+  { title: "PPC (Pay-Per-Click) em Google e Bing" },
+  { title: "Pesquisa de Mercado e Análise de Competidores" },
+  { title: "Redes Sociais" },
+  { title: "Remarketing/Retargeting" },
+  { title: "SEO" },
+  { title: "Vídeo Marketing" },
+  { title: "Web Analytics & Conversion Optimization" },
 ];
 
 const Header = () => {
@@ -42,7 +66,6 @@ const Header = () => {
     { name: "Início", href: "#home" },
     { name: "Serviços", href: "#services" },
     { name: "Sobre", href: "#about" },
-    { name: "Depoimentos", href: "#testimonials" },
     { name: "Blog", href: "#blog" },
     { name: "Contato", href: "#contact" }
   ];

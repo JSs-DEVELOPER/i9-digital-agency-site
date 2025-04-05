@@ -7,6 +7,14 @@ interface HeroProps {
 }
 
 const Hero = ({ onOpenAppointment }: HeroProps) => {
+  // Function to scroll to services section
+  const scrollToServices = () => {
+    const servicesSection = document.getElementById('services');
+    if (servicesSection) {
+      servicesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section 
       id="home" 
@@ -43,7 +51,11 @@ const Hero = ({ onOpenAppointment }: HeroProps) => {
                 Agendar uma Consultoria
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button variant="outline" className="border-i9-blue text-i9-blue hover:bg-i9-blue/5">
+              <Button 
+                variant="outline" 
+                className="border-i9-blue text-i9-blue hover:bg-i9-blue/5"
+                onClick={scrollToServices}
+              >
                 Ver Nossos Serviços
               </Button>
             </div>
@@ -79,11 +91,16 @@ const Hero = ({ onOpenAppointment }: HeroProps) => {
             <div className="relative w-full aspect-square max-w-lg mx-auto">
               <div className="absolute inset-0 bg-gradient-to-tr from-i9-blue to-i9-orange opacity-20 rounded-xl"></div>
               <div className="absolute inset-2 bg-white rounded-lg shadow-xl overflow-hidden flex items-center justify-center">
-                <img 
-                  src="https://i9empreendendo.com/wp-content/uploads/2024/10/i9logo-2_preview_rev_1.png"
-                  alt="i9 Agência" 
-                  className="max-w-[70%] max-h-[70%] object-contain" 
-                />
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="max-w-[80%] max-h-[80%] object-contain"
+                >
+                  <source src="https://i9empreendendo.com/wp-content/uploads/2024/10/marketing-video.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </div>
             </div>
             <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-lg shadow-lg">

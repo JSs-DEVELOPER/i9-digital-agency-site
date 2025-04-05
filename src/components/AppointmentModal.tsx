@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Calendar } from "@/components/ui/calendar"
@@ -19,9 +19,10 @@ interface AppointmentModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   services: { title: string }[]
+  selectedService?: string
 }
 
-export const AppointmentModal = ({ open, onOpenChange, services }: AppointmentModalProps) => {
+export const AppointmentModal = ({ open, onOpenChange, services, selectedService = "" }: AppointmentModalProps) => {
   const { toast } = useToast()
   const [date, setDate] = useState<Date | undefined>(undefined)
   const [timeSlot, setTimeSlot] = useState<string | null>(null)
@@ -32,6 +33,13 @@ export const AppointmentModal = ({ open, onOpenChange, services }: AppointmentMo
     service: "",
     message: ""
   })
+  
+  // Update selected service when prop changes
+  useEffect(() => {
+    if (selectedService) {
+      setFormData(prev => ({ ...prev, service: selectedService }))
+    }
+  }, [selectedService, open])
   
   const availableTimes = [
     "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"
