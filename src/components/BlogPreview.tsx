@@ -1,7 +1,6 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Calendar, ChevronRight } from "lucide-react";
+import { Calendar, ChevronRight, Linkedin, Mail } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -403,7 +402,7 @@ const blogPosts = [
       <p>Backlinks de sites locais relevantes são extremamente valiosos para SEO local. Considere parcerias com empresas complementares, patrocínios de eventos locais, participação em associações comerciais da região e contribuições para blogs ou jornais locais.</p>
       
       <h3>Mobile-first é essencial</h3>
-      <p>A maioria das buscas locais acontece em dispositivos móveis, frequentemente quando as pessoas estão em movimento e precisam de algo nas proximidades. Garanta que seu site seja perfeitamente responsivo e ofereça uma excelente experiência em smartphones.</p>
+      <p>A maioria das buscas locais acontece em dispositivos móveis, frequentemente quando as pessoas estao em movimento e precisam de algo nas proximidades. Garanta que seu site seja perfeitamente responsivo e ofereça uma excelente experiência em smartphones.</p>
       
       <p>SEO local não é uma estratégia única, mas um conjunto contínuo de práticas que precisam ser mantidas e atualizadas regularmente. Quando implementado corretamente, o SEO local pode transformar significativamente a visibilidade do seu negócio precisamente para as pessoas que estão mais propensas a se tornarem seus clientes: aquelas na sua área geográfica.</p>
     `
@@ -464,7 +463,6 @@ const BlogPreview = () => {
         <span className="inline-block px-4 py-2 rounded-full bg-i9-blue/10 text-i9-blue font-medium text-sm mb-4">
           Blog
         </span>
-        {/* Title removed as requested */}
         <p className="section-subtitle">
           Artigos, tutoriais e insights para ajudar a manter sua estratégia de marketing digital à frente da concorrência.
         </p>
@@ -511,7 +509,6 @@ const BlogPreview = () => {
         ))}
       </div>
 
-      {/* Blog Post Modal - Improved for SEO and better presentation */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto">
           {selectedPost && (
@@ -546,7 +543,6 @@ const BlogPreview = () => {
                     dangerouslySetInnerHTML={{ __html: selectedPost.content }}
                   />
                   
-                  {/* SEO-friendly meta information */}
                   <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                     <div className="flex flex-wrap gap-2">
                       <span className="text-sm text-gray-600 dark:text-gray-400">

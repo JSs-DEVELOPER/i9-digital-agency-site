@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { 
   SearchIcon, BarChart3, MonitorSmartphone, LineChart, MessageSquare, 
@@ -157,7 +156,7 @@ const serviceData: ServiceDetailProps[] = [
   {
     icon: Layout,
     title: "Desenvolvimento de Site e Landing Pages",
-    description: "Criação de sites e páginas de conversão otimizadas para resultados.",
+    description: "Criaç��o de sites e páginas de conversão otimizadas para resultados.",
     detailedDescription: "Criamos sites e landing pages estrategicamente desenvolvidos para converter visitantes em leads e clientes. Nossos projetos combinam design atrativo, usabilidade e elementos de conversão para maximizar os resultados do seu negócio digital.",
     features: [
       "Sites institucionais e corporativos",
@@ -578,7 +577,6 @@ const Services = () => {
         <span className="inline-block px-4 py-2 rounded-full bg-i9-blue/10 dark:bg-i9-blue/20 text-i9-blue font-medium text-sm mb-4">
           Nossos Serviços
         </span>
-        {/* Title removed as requested */}
         <p className="section-subtitle dark:text-gray-300">
           Oferecemos um conjunto abrangente de serviços de marketing digital para impulsionar sua marca e gerar resultados mensuráveis.
         </p>
@@ -609,13 +607,11 @@ const Services = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
+            <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between pointer-events-none z-10">
+              <CarouselPrevious className="relative pointer-events-auto" />
+              <CarouselNext className="relative pointer-events-auto" />
+            </div>
           </Carousel>
-          
-          {/* Positioned navigation buttons at the same height as the service blocks */}
-          <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between px-2 z-10 pointer-events-none">
-            <CarouselPrevious className="relative pointer-events-auto" />
-            <CarouselNext className="relative pointer-events-auto" />
-          </div>
         </div>
       </div>
 
