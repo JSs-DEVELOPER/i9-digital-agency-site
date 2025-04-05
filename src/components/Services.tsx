@@ -1,10 +1,9 @@
-
 import { useState, useRef, useEffect } from "react";
 import { 
   SearchIcon, BarChart3, MonitorSmartphone, LineChart, MessageSquare, 
   Target, Globe, TrendingUp, Instagram, Linkedin, Mail, Layout, 
   MessageCircle, Star, Brush, Users, DollarSign, BarChartHorizontal, 
-  RefreshCw, Video, MailWarning, Search, Database, SmartphoneMobile, 
+  RefreshCw, Video, MailWarning, Search, Database, Smartphone, 
   ShoppingBag, MousePointer, Locate, Building, Youtube
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,12 @@ import {
 import { ServiceModal, type ServiceDetailProps } from "@/components/ServiceModal";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const serviceData: ServiceDetailProps[] = [
   {
@@ -547,21 +552,19 @@ const Services = () => {
     setIsModalOpen(true);
   };
 
-  // Start automatic carousel movement
   useEffect(() => {
     const interval = setInterval(() => {
       if (carouselRef.current) {
         const carousel = carouselRef.current;
         const scrollAmount = carousel.offsetWidth / 3;
         
-        // When we reach the end, reset to beginning
         if (carousel.scrollLeft + carousel.offsetWidth >= carousel.scrollWidth - 50) {
           carousel.scrollTo({ left: 0, behavior: 'smooth' });
         } else {
           carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         }
       }
-    }, 5000); // Scroll every 5 seconds
+    }, 5000);
     
     return () => clearInterval(interval);
   }, []);
@@ -626,16 +629,13 @@ const Services = () => {
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
           onRequestQuote={() => {
-            // Use toast to simulate booking functionality
             toast({
               title: "Solicitação de proposta enviada!",
               description: `Você será redirecionado para agendar uma consultoria para ${selectedService.title}.`,
             });
             
-            // Close the current modal and trigger appointment modal
             setIsModalOpen(false);
             
-            // Emit an event that will be caught in the Index component
             const event = new CustomEvent('openAppointmentModal', { 
               detail: { serviceName: selectedService.title }
             });
