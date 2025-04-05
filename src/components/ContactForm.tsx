@@ -3,40 +3,79 @@ import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Mail, Phone, MapPin, MessageSquare } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { TestimonialsModal } from "./Testimonials";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { 
+  Mail, 
+  Phone, 
+  Share2,
+} from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
+// Form schema
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "Nome deve ter pelo menos 2 caracteres.",
+    message: "Por favor, insira seu nome completo.",
   }),
   email: z.string().email({
-    message: "Email inválido.",
+    message: "Por favor, insira um email válido.",
   }),
-  phone: z.string().min(10, {
-    message: "Telefone deve ter pelo menos 10 dígitos.",
-  }),
+  phone: z.string().optional(),
   message: z.string().min(10, {
-    message: "Mensagem deve ter pelo menos 10 caracteres.",
+    message: "Por favor, escreva uma mensagem com pelo menos 10 caracteres.",
   }),
+  services: z.array(z.string()).optional(),
 });
 
+// Services list from the main services data
+const services = [
+  { id: "analise-dados", label: "Análise de Dados" },
+  { id: "apps-mobile", label: "Aplicativos Móveis e Desenvolvimento de Soluções Digitais" },
+  { id: "automacao", label: "Automação de Marketing" },
+  { id: "branding", label: "Branding Digital" },
+  { id: "consultoria", label: "Consultoria de Marketing Digital" },
+  { id: "copywriting", label: "Copywriting" },
+  { id: "design", label: "Design Gráfico e Criação Visual" },
+  { id: "desenvolvimento", label: "Desenvolvimento Web" },
+  { id: "sites", label: "Desenvolvimento de Site e Landing Pages" },
+  { id: "email", label: "Email Marketing" },
+  { id: "global", label: "Estratégias de Expansão Internacional (Global Marketing)" },
+  { id: "facebook", label: "Facebook Ads" },
+  { id: "video", label: "Gestão de Campanhas de Publicidade em Vídeo" },
+  { id: "comunidades", label: "Gestão de Comunidades Online" },
+  { id: "reputacao", label: "Gestão de Reputação Online (ORM)" },
+  { id: "trafego", label: "Gestão de Tráfego Pago" },
+  { id: "google-ads", label: "Google Ads" },
+  { id: "analytics", label: "Google Analytics e Relatórios de Dados" },
+  { id: "influencer", label: "Influencer Marketing" },
+  { id: "instagram", label: "Instagram Ads" },
+  { id: "linkedin", label: "LinkedIn Ads" },
+  { id: "conteudo", label: "Marketing de Conteúdo" },
+  { id: "afiliados", label: "Marketing de Afiliados" },
+  { id: "imobiliario", label: "Marketing Imobiliário" },
+  { id: "ecommerce", label: "Marketing para eCommerce" },
+  { id: "ppc", label: "PPC (Pay-Per-Click) em Google e Bing" },
+  { id: "pesquisa", label: "Pesquisa de Mercado e Análise de Competidores" },
+  { id: "redes", label: "Redes Sociais" },
+  { id: "remarketing", label: "Remarketing/Retargeting" },
+  { id: "seo", label: "SEO" },
+  { id: "video-marketing", label: "Vídeo Marketing" },
+  { id: "analytics-conversion", label: "Web Analytics & Conversion Optimization" },
+];
+
 const ContactForm = () => {
-  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isTestimonialsModalOpen, setIsTestimonialsModalOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,255 +84,282 @@ const ContactForm = () => {
       email: "",
       phone: "",
       message: "",
+      services: [],
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     
-    try {
-      // Simulating API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+    // Simulate form submission
+    setTimeout(() => {
+      console.log(values);
       toast({
         title: "Mensagem enviada com sucesso!",
         description: "Entraremos em contato em breve.",
       });
-      
       form.reset();
-    } catch (error) {
-      toast({
-        title: "Erro ao enviar mensagem",
-        description: "Por favor, tente novamente mais tarde.",
-        variant: "destructive",
-      });
-    } finally {
       setIsSubmitting(false);
+    }, 1500);
+  }
+
+  const handleShareSocial = (platform: string) => {
+    const url = window.location.href;
+    const title = "i9 Agência de Marketing Digital";
+    let shareUrl = "";
+    
+    switch (platform) {
+      case "twitter":
+        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
+        break;
+      case "facebook":
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        break;
+      case "linkedin":
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+        break;
+      case "whatsapp":
+        shareUrl = `https://wa.me/?text=${encodeURIComponent(`${title} - ${url}`)}`;
+        break;
     }
+    
+    if (shareUrl) window.open(shareUrl, "_blank");
   };
-  
+
   return (
-    <section id="contact" className="container-section relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-background to-background/80 dark:from-background/50 dark:to-background/30 -z-10"></div>
+    <section id="contact" className="container-section relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-background/90 to-background/40 dark:from-background/50 dark:to-background/20 -z-10"></div>
       
-      <div className="text-center max-w-3xl mx-auto">
-        <span className="inline-block px-4 py-2 rounded-full bg-i9-blue/10 dark:bg-i9-blue/20 text-i9-blue font-medium text-sm mb-4">
-          Contato
-        </span>
-        {/* Title removed as requested */}
-        <p className="section-subtitle dark:text-gray-300">
-          Estamos prontos para ajudar seu negócio a alcançar novos patamares com estratégias de marketing digital personalizadas.
-        </p>
+      {/* Parallax effect elements */}
+      <div className="absolute inset-0 -z-20 opacity-10">
+        <div className="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2426&q=80')] bg-cover bg-center bg-fixed"></div>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-12">
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
-          <h3 className="text-xl font-semibold mb-6 dark:text-white">Envie sua mensagem</h3>
-          
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome completo</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Seu nome" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>E-mail</FormLabel>
-                      <FormControl>
-                        <Input placeholder="seu@email.com" type="email" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Telefone</FormLabel>
-                      <FormControl>
-                        <Input placeholder="(00) 00000-0000" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mensagem</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Como podemos ajudar você?" 
-                        className="min-h-[120px] resize-none"
-                        maxLength={1000}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <Button 
-                type="submit" 
-                className="w-full bg-i9-blue hover:bg-i9-blue/90 text-white"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Enviando..." : "Enviar mensagem"}
-              </Button>
-            </form>
-          </Form>
+      <div className="container mx-auto px-4">
+        <div className="text-center max-w-3xl mx-auto">
+          <span className="inline-block px-4 py-2 rounded-full bg-i9-blue/10 dark:bg-i9-blue/20 text-i9-blue font-medium text-sm mb-4">
+            Contato
+          </span>
+          <p className="section-subtitle dark:text-gray-300">
+            Entre em contato com nossa equipe e descubra como podemos impulsionar os resultados do seu negócio.
+          </p>
         </div>
         
-        <div>
-          <h3 className="text-xl font-semibold mb-6 dark:text-white">Informações de contato</h3>
-          
-          <div className="grid gap-6">
-            <div className="flex items-start gap-3">
-              <div className="bg-i9-blue/10 dark:bg-i9-blue/20 rounded-full p-3 mt-1">
-                <Mail className="w-5 h-5 text-i9-blue" />
-              </div>
-              <div>
-                <h4 className="font-medium dark:text-white">Email</h4>
-                <p className="text-gray-600 dark:text-gray-300">contato@i9agencia.com.br</p>
-                <a href="mailto:contato@i9agencia.com.br" className="text-i9-blue hover:underline text-sm">
-                  Enviar email
-                </a>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-3">
-              <div className="bg-i9-blue/10 dark:bg-i9-blue/20 rounded-full p-3 mt-1">
-                <Phone className="w-5 h-5 text-i9-blue" />
-              </div>
-              <div>
-                <h4 className="font-medium dark:text-white">Telefone</h4>
-                <p className="text-gray-600 dark:text-gray-300">(11) 99999-9999</p>
-                <a href="tel:+5511999999999" className="text-i9-blue hover:underline text-sm">
-                  Ligar agora
-                </a>
-              </div>
-            </div>
-            
-            {/* New Button for Testimonials */}
-            <div className="flex items-start gap-3">
-              <div className="bg-i9-blue/10 dark:bg-i9-blue/20 rounded-full p-3 mt-1">
-                <MessageSquare className="w-5 h-5 text-i9-blue" />
-              </div>
-              <div>
-                <h4 className="font-medium dark:text-white">Depoimentos</h4>
-                <p className="text-gray-600 dark:text-gray-300">Veja o que nossos clientes dizem</p>
-                <Button 
-                  variant="link" 
-                  onClick={() => setIsTestimonialsModalOpen(true)}
-                  className="text-i9-blue hover:underline text-sm px-0"
-                >
-                  Ver Depoimentos
-                </Button>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-3">
-              <div className="bg-i9-blue/10 dark:bg-i9-blue/20 rounded-full p-3 mt-1">
-                <MapPin className="w-5 h-5 text-i9-blue" />
-              </div>
-              <div>
-                <h4 className="font-medium dark:text-white">Endereço</h4>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Av. Paulista, 1000 - Bela Vista<br />
-                  São Paulo - SP, 01310-100
-                </p>
-                <a 
-                  href="https://maps.google.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-i9-blue hover:underline text-sm"
-                >
-                  Ver no mapa
-                </a>
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-12">
+          <div className="lg:col-span-2">
+            <div className="bg-white dark:bg-gray-800/70 shadow-sm rounded-xl p-8 relative z-10">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nome Completo</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Seu nome completo" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input type="email" placeholder="seu@email.com" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Telefone (opcional)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="(00) 00000-0000" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="services"
+                    render={() => (
+                      <FormItem>
+                        <div className="mb-4">
+                          <FormLabel>Serviços de Interesse</FormLabel>
+                          <FormDescription>
+                            Selecione os serviços que você tem interesse
+                          </FormDescription>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 border rounded-md">
+                          {services.map((service) => (
+                            <FormField
+                              key={service.id}
+                              control={form.control}
+                              name="services"
+                              render={({ field }) => {
+                                return (
+                                  <FormItem
+                                    key={service.id}
+                                    className="flex flex-row items-start space-x-3 space-y-0"
+                                  >
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(service.id)}
+                                        onCheckedChange={(checked) => {
+                                          return checked
+                                            ? field.onChange([...field.value || [], service.id])
+                                            : field.onChange(field.value?.filter((value) => value !== service.id));
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="font-normal text-sm">
+                                      {service.label}
+                                    </FormLabel>
+                                  </FormItem>
+                                );
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Mensagem</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Como podemos ajudar seu negócio?" 
+                            className="min-h-[120px]" 
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Button type="submit" className="btn-primary w-full" disabled={isSubmitting}>
+                    {isSubmitting ? "Enviando..." : "Enviar Mensagem"}
+                  </Button>
+                </form>
+              </Form>
             </div>
           </div>
           
-          <div className="mt-8 grid grid-cols-4 gap-4">
-            <a 
-              href="https://instagram.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-100 dark:border-gray-700 transition-colors"
-            >
-              <div className="text-i9-blue">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clipRule="evenodd"></path>
-                </svg>
+          <div>
+            <div className="bg-white dark:bg-gray-800/70 shadow-sm rounded-xl p-8 relative z-10 h-full">
+              <h3 className="text-2xl font-semibold mb-6">Informações de Contato</h3>
+              
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="bg-i9-blue/10 dark:bg-i9-blue/20 rounded-full p-3">
+                    <Mail className="w-5 h-5 text-i9-blue" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium mb-1">Email</h4>
+                    <a href="mailto:contato@i9agencia.com.br" className="text-gray-600 dark:text-gray-300 hover:text-i9-blue dark:hover:text-i9-blue transition-colors">
+                      contato@i9agencia.com.br
+                    </a>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4">
+                  <div className="bg-i9-blue/10 dark:bg-i9-blue/20 rounded-full p-3">
+                    <Phone className="w-5 h-5 text-i9-blue" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium mb-1">Telefone</h4>
+                    <a href="tel:+5511998765432" className="text-gray-600 dark:text-gray-300 hover:text-i9-blue dark:hover:text-i9-blue transition-colors">
+                      +55 11 99876-5432
+                    </a>
+                  </div>
+                </div>
+                
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <h4 className="font-medium mb-4">Compartilhar</h4>
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={() => handleShareSocial("facebook")} 
+                      className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors"
+                      aria-label="Compartilhar no Facebook"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700 dark:text-gray-300">
+                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={() => handleShareSocial("twitter")} 
+                      className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors" 
+                      aria-label="Compartilhar no Twitter"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700 dark:text-gray-300">
+                        <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={() => handleShareSocial("linkedin")} 
+                      className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors" 
+                      aria-label="Compartilhar no LinkedIn"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700 dark:text-gray-300">
+                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                        <rect x="2" y="9" width="4" height="12" />
+                        <circle cx="4" cy="4" r="2" />
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={() => handleShareSocial("whatsapp")} 
+                      className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors" 
+                      aria-label="Compartilhar no WhatsApp"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700 dark:text-gray-300">
+                        <path d="M17.498 14.382c-.301-.15-1.767-.867-2.04-.966-.273-.101-.473-.15-.673.15-.2.301-.767.966-.94 1.164-.173.199-.347.223-.646.075-.3-.15-1.267-.465-2.414-1.485-.893-.795-1.494-1.776-1.67-2.076-.174-.301-.018-.465.13-.615.134-.135.301-.353.452-.529.149-.176.198-.301.297-.502.099-.2.05-.374-.025-.524-.075-.15-.672-1.62-.922-2.219-.239-.582-.487-.501-.673-.51-.172-.009-.371-.01-.571-.01-.2 0-.523.074-.797.359-.273.284-1.045.942-1.045 2.299s1.07 2.669 1.22 2.87c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.571-.347z" />
+                        <path d="M13.458 24h-.08a11.947 11.947 0 01-6.108-1.688l-.439-.262-4.56 1.229 1.245-4.545-.287-.455A11.934 11.934 0 011 11.882C1 5.335 6.335 0 12.882 0c3.18 0 6.15 1.232 8.4 3.472a11.717 11.717 0 013.443 8.347c0 6.548-5.335 11.882-11.267 11.882z" />
+                      </svg>
+                    </button>
+                    <button 
+                      className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors flex items-center justify-center cursor-pointer"
+                      onClick={() => {
+                        if (navigator.share) {
+                          navigator.share({
+                            title: 'i9 Agência de Marketing Digital',
+                            text: 'Confira a i9 Agência de Marketing Digital',
+                            url: window.location.href,
+                          })
+                          .catch((error) => console.log('Erro ao compartilhar', error));
+                        }
+                      }}
+                      aria-label="Compartilhar"
+                    >
+                      <Share2 className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                    </button>
+                  </div>
+                </div>
               </div>
-            </a>
-            
-            <a 
-              href="https://twitter.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-100 dark:border-gray-700 transition-colors"
-            >
-              <div className="text-i9-blue">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
-                </svg>
-              </div>
-            </a>
-            
-            <a 
-              href="https://linkedin.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-100 dark:border-gray-700 transition-colors"
-            >
-              <div className="text-i9-blue">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path>
-                </svg>
-              </div>
-            </a>
-            
-            <a 
-              href="https://facebook.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-100 dark:border-gray-700 transition-colors"
-            >
-              <div className="text-i9-blue">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd"></path>
-                </svg>
-              </div>
-            </a>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Testimonials Modal */}
-      <TestimonialsModal open={isTestimonialsModalOpen} onOpenChange={setIsTestimonialsModalOpen} />
     </section>
   );
 };

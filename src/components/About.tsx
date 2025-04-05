@@ -13,7 +13,7 @@ const About = () => {
 
   return (
     <section id="about" className="py-16 md:py-24 relative">
-      <div className="absolute inset-0 bg-gray-50 dark:bg-gray-900/50 -z-20"></div>
+      <div className="absolute inset-0 bg-gray-50 dark:bg-gray-900/50 -z-20 parallax-bg"></div>
       
       {/* Parallax effect elements */}
       <div className="absolute inset-0 -z-10 opacity-20">
@@ -26,16 +26,11 @@ const About = () => {
           <div className="order-2 lg:order-1">
             <div className="relative">
               <div className="relative z-10 rounded-xl overflow-hidden shadow-xl transform transition-transform duration-500">
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
+                <img 
+                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2426&q=80" 
+                  alt="Equipe de marketing digital trabalhando" 
                   className="w-full h-auto object-cover"
-                >
-                  <source src="https://i9empreendendo.com/wp-content/uploads/2024/10/marketing-team.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
+                />
               </div>
               
               <div className="absolute -bottom-6 -right-6 w-48 h-48 bg-i9-blue rounded-full opacity-20 z-0 animate-pulse"></div>
@@ -47,7 +42,6 @@ const About = () => {
             <span className="inline-block px-4 py-2 rounded-full bg-i9-blue/10 dark:bg-i9-blue/20 text-i9-blue font-medium text-sm mb-4">
               Sobre a i9 Agência
             </span>
-            {/* Section title removed as requested */}
             <p className="text-gray-600 dark:text-gray-300 mb-8">
               A i9 Agência nasceu com o propósito de transformar negócios através do marketing digital de alta performance. Com anos de experiência e centenas de cases de sucesso, nossa equipe é especializada em desenvolver estratégias personalizadas que geram resultados reais e mensuráveis.
             </p>

@@ -544,8 +544,9 @@ const Services = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAllServicesModalOpen, setIsAllServicesModalOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement | null>(null);
   const { toast } = useToast();
+  const [api, setApi] = useState<any>(null);
 
   const handleServiceClick = (service: ServiceDetailProps) => {
     setSelectedService(service);
@@ -553,21 +554,14 @@ const Services = () => {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (carouselRef.current) {
-        const carousel = carouselRef.current;
-        const scrollAmount = carousel.offsetWidth / 3;
-        
-        if (carousel.scrollLeft + carousel.offsetWidth >= carousel.scrollWidth - 50) {
-          carousel.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-        }
-      }
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, []);
+    if (api) {
+      const interval = setInterval(() => {
+        api.scrollNext();
+      }, 3000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [api]);
 
   return (
     <section id="services" className="container-section relative overflow-hidden">
@@ -582,13 +576,14 @@ const Services = () => {
         </p>
       </div>
 
-      <div className="mt-12 px-4" ref={carouselRef}>
+      <div className="mt-12 px-8 md:px-12" ref={carouselRef}>
         <div className="relative">
           <Carousel
             opts={{
               align: "start",
               loop: true,
             }}
+            setApi={setApi}
             className="w-full"
           >
             <CarouselContent>
@@ -607,9 +602,9 @@ const Services = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between pointer-events-none z-10">
-              <CarouselPrevious className="relative pointer-events-auto" />
-              <CarouselNext className="relative pointer-events-auto" />
+            <div className="absolute top-1/2 -translate-y-1/2 -left-6 -right-6 flex justify-between pointer-events-none z-10">
+              <CarouselPrevious className="relative pointer-events-auto w-10 h-10" />
+              <CarouselNext className="relative pointer-events-auto w-10 h-10" />
             </div>
           </Carousel>
         </div>

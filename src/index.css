@@ -150,6 +150,14 @@
   .parallax-content {
     @apply relative z-10;
   }
+
+  /* Additional parallax classes */
+  .parallax-section {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
 }
 
 /* Custom scrollbar for better UX */
@@ -188,5 +196,43 @@ html {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+}
+
+/* Improved responsiveness for mobile devices */
+@media (max-width: 640px) {
+  .container-section {
+    @apply py-10;
+  }
+  
+  h1 {
+    @apply text-3xl;
+  }
+  
+  h2 {
+    @apply text-2xl;
+  }
+  
+  h3 {
+    @apply text-xl;
+  }
+  
+  .section-subtitle {
+    @apply text-base mb-8;
+  }
+}
+
+/* Make sure parallax works on mobile devices */
+@supports (-webkit-touch-callout: none) {
+  .parallax-bg, .parallax-section {
+    background-attachment: scroll;
+  }
+}
+
+/* Fix carousel navigation on mobile */
+@media (max-width: 640px) {
+  .embla__button {
+    @apply w-8 h-8;
+    transform: translateY(-50%);
   }
 }
