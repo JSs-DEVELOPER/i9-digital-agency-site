@@ -124,18 +124,81 @@ export const AnalyticsScripts = () => {
     fetchAnalyticsScripts();
   }, []);
 
-  // Inject scripts directly into the document head
+  // Inject HEAD scripts
   useEffect(() => {
-    // Function to create and inject a script element
-    const injectScript = (scriptContent: string) => {
+    // Function to create and inject a script element in head
+    const injectHeadScript = (scriptContent: string) => {
       const scriptEl = document.createElement('script');
       scriptEl.innerHTML = scriptContent;
       document.head.appendChild(scriptEl);
       return scriptEl;
     };
 
-    // Function to create and inject HTML content (for divs, etc.)
-    const injectHTML = (htmlContent: string) => {
+    // Create array to track injected elements for cleanup
+    const headInjectedElements: HTMLElement[] = [];
+    
+    // Inject Google Analytics 4 script in head
+    if (analyticsData.google_analytics?.script) {
+      headInjectedElements.push(injectHeadScript(analyticsData.google_analytics.script));
+    }
+
+    // Inject Google Ads script in head
+    if (analyticsData.google_ads?.script) {
+      headInjectedElements.push(injectHeadScript(analyticsData.google_ads.script));
+    }
+
+    // Inject Facebook/Instagram script in head
+    if (analyticsData.facebook_instagram?.script) {
+      headInjectedElements.push(injectHeadScript(analyticsData.facebook_instagram.script));
+    }
+
+    // Inject Bing/Microsoft script in head
+    if (analyticsData.bing_microsoft?.script) {
+      headInjectedElements.push(injectHeadScript(analyticsData.bing_microsoft.script));
+    }
+
+    // Inject LinkedIn script in head
+    if (analyticsData.linkedin?.script) {
+      headInjectedElements.push(injectHeadScript(analyticsData.linkedin.script));
+    }
+
+    // Inject Google GTM head snippet in head
+    if (analyticsData.google_gtm?.gtm_head_snippet) {
+      headInjectedElements.push(injectHeadScript(analyticsData.google_gtm.gtm_head_snippet));
+    }
+
+    // Inject Universal Codes script in head
+    if (analyticsData.codigos_universais?.script) {
+      headInjectedElements.push(injectHeadScript(analyticsData.codigos_universais.script));
+    }
+
+    // Inject Cookie Tracking script in head
+    if (analyticsData.cookie_rastreio?.script) {
+      headInjectedElements.push(injectHeadScript(analyticsData.cookie_rastreio.script));
+    }
+
+    // Cleanup function to remove all injected head elements when component unmounts
+    return () => {
+      headInjectedElements.forEach((element) => {
+        if (element.parentNode) {
+          element.parentNode.removeChild(element);
+        }
+      });
+    };
+  }, [analyticsData]);
+
+  // Inject BODY scripts and HTML
+  useEffect(() => {
+    // Function to create and inject a script element in body
+    const injectBodyScript = (scriptContent: string) => {
+      const scriptEl = document.createElement('script');
+      scriptEl.innerHTML = scriptContent;
+      document.body.appendChild(scriptEl);
+      return scriptEl;
+    };
+
+    // Function to create and inject HTML content (for divs, etc.) in body
+    const injectBodyHTML = (htmlContent: string) => {
       const containerEl = document.createElement('div');
       containerEl.style.display = 'none';
       containerEl.innerHTML = htmlContent;
@@ -143,72 +206,40 @@ export const AnalyticsScripts = () => {
       return containerEl;
     };
 
-    const injectedElements: (HTMLScriptElement | HTMLDivElement)[] = [];
+    // Create array to track injected elements for cleanup
+    const bodyInjectedElements: HTMLElement[] = [];
     
-    // Add Google Analytics script
-    if (analyticsData.google_analytics?.script) {
-      injectedElements.push(injectScript(analyticsData.google_analytics.script));
-    }
-
-    // Add Google Ads script
-    if (analyticsData.google_ads?.script) {
-      injectedElements.push(injectScript(analyticsData.google_ads.script));
-    }
-
-    // Add Facebook/Instagram script
-    if (analyticsData.facebook_instagram?.script) {
-      injectedElements.push(injectScript(analyticsData.facebook_instagram.script));
-    }
-
-    // Add Bing/Microsoft script
-    if (analyticsData.bing_microsoft?.script) {
-      injectedElements.push(injectScript(analyticsData.bing_microsoft.script));
-    }
-
-    // Add LinkedIn script
-    if (analyticsData.linkedin?.script) {
-      injectedElements.push(injectScript(analyticsData.linkedin.script));
-    }
-
-    // Add Google Tag Manager scripts
-    if (analyticsData.google_gtm?.gtm_head_snippet) {
-      injectedElements.push(injectScript(analyticsData.google_gtm.gtm_head_snippet));
-    }
-    
+    // Inject Google GTM body script
     if (analyticsData.google_gtm?.tag_manager_script) {
-      injectedElements.push(injectScript(analyticsData.google_gtm.tag_manager_script));
-    }
-
-    // Add Cookie Tracking scripts and HTML
-    if (analyticsData.cookie_rastreio?.script) {
-      injectedElements.push(injectScript(analyticsData.cookie_rastreio.script));
+      bodyInjectedElements.push(injectBodyScript(analyticsData.google_gtm.tag_manager_script));
     }
     
+    // Inject Cookie Tracking HTML in body
     if (analyticsData.cookie_rastreio?.html) {
-      injectedElements.push(injectHTML(analyticsData.cookie_rastreio.html));
+      bodyInjectedElements.push(injectBodyHTML(analyticsData.cookie_rastreio.html));
     }
     
+    // Inject Cookie Tracking extra script in body
     if (analyticsData.cookie_rastreio?.script_extra) {
-      injectedElements.push(injectScript(analyticsData.cookie_rastreio.script_extra));
-    }
-
-    // Add Universal Code scripts and HTML
-    if (analyticsData.codigos_universais?.script) {
-      injectedElements.push(injectScript(analyticsData.codigos_universais.script));
+      bodyInjectedElements.push(injectBodyScript(analyticsData.cookie_rastreio.script_extra));
     }
     
+    // Inject Universal Codes HTML in body
     if (analyticsData.codigos_universais?.html) {
-      injectedElements.push(injectHTML(analyticsData.codigos_universais.html));
+      bodyInjectedElements.push(injectBodyHTML(analyticsData.codigos_universais.html));
     }
     
+    // Inject Universal Codes extra script in body
     if (analyticsData.codigos_universais?.script_extra) {
-      injectedElements.push(injectScript(analyticsData.codigos_universais.script_extra));
+      bodyInjectedElements.push(injectBodyScript(analyticsData.codigos_universais.script_extra));
     }
 
-    // Cleanup function to remove all injected elements when component unmounts
+    // Cleanup function to remove all injected body elements when component unmounts
     return () => {
-      injectedElements.forEach((element) => {
-        element.parentNode?.removeChild(element);
+      bodyInjectedElements.forEach((element) => {
+        if (element.parentNode) {
+          element.parentNode.removeChild(element);
+        }
       });
     };
   }, [analyticsData]);
