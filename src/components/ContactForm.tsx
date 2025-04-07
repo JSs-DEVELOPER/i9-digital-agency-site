@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -33,7 +32,6 @@ import {
 import { TestimonialsModal } from "@/components/Testimonials";
 import { supabase } from "@/integrations/supabase/client";
 
-// Form schema
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Por favor, insira seu nome completo.",
@@ -48,7 +46,6 @@ const formSchema = z.object({
   }),
 });
 
-// Services list from the main services data
 const services = [
   { id: "analise-dados", label: "Análise de Dados" },
   { id: "apps-mobile", label: "Aplicativos Móveis e Desenvolvimento de Soluções Digitais" },
@@ -103,7 +100,6 @@ const ContactForm = () => {
     setIsSubmitting(true);
     
     try {
-      // Submit to Supabase
       const { data, error } = await supabase
         .from('contact_submissions')
         .insert({
@@ -142,168 +138,153 @@ const ContactForm = () => {
     }
   }
 
-  const handleShareSocial = (platform: string) => {
-    const url = window.location.href;
-    const title = "i9 Agência de Marketing Digital";
-    let shareUrl = "";
+  const handleShare = (platform: 'facebook' | 'twitter' | 'linkedin' | 'whatsapp' | 'email') => {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent("i9 Agência Digital - Especialistas em Marketing Digital");
+    const message = encodeURIComponent("Conheça a i9 Agência Digital e descubra como podemos impulsionar seu negócio online!");
+    
+    let shareUrl = '';
     
     switch (platform) {
-      case "twitter":
-        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
         break;
-      case "facebook":
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${message}`;
         break;
-      case "linkedin":
-        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
         break;
-      case "whatsapp":
-        shareUrl = `https://wa.me/?text=${encodeURIComponent(`${title} - ${url}`)}`;
+      case 'whatsapp':
+        shareUrl = `https://api.whatsapp.com/send?text=${message} ${url}`;
         break;
-      case "blog":
-        // Scroll to the blog section
-        const blogSection = document.getElementById("blog");
-        if (blogSection) {
-          blogSection.scrollIntoView({ behavior: 'smooth' });
-        }
-        return;
-      case "testimonials":
-        setTestimonialsOpen(true);
-        return;
+      case 'email':
+        shareUrl = `mailto:?subject=${title}&body=${message} ${url}`;
+        break;
     }
     
-    if (shareUrl) window.open(shareUrl, "_blank");
+    if (shareUrl) window.open(shareUrl, '_blank');
   };
 
   return (
-    <section id="contact" className="container-section relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-background/90 to-background/40 dark:from-background/50 dark:to-background/20 -z-10"></div>
-      
-      {/* Parallax effect elements */}
-      <div className="absolute inset-0 -z-20 opacity-10">
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2426&q=80')] bg-cover bg-center bg-fixed"></div>
-      </div>
-      
+    <section id="contato" className="py-16 bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto">
-          <span className="inline-block px-4 py-2 rounded-full bg-i9-blue/10 dark:bg-i9-blue/20 text-i9-blue font-medium text-sm mb-4">
-            Contato
-          </span>
-          <p className="section-subtitle dark:text-gray-300">
-            Entre em contato com nossa equipe e descubra como podemos impulsionar os resultados do seu negócio.
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">Entre em Contato</h2>
+          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Estamos prontos para ajudar você a atingir seus objetivos de marketing digital. 
+            Preencha o formulário abaixo ou entre em contato diretamente através de um dos nossos canais.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-12">
-          <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-800/70 shadow-sm rounded-xl p-8 relative z-10">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Nome Completo</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Seu nome completo" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="seu@email.com" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
-                    name="phone"
+                    name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Telefone (opcional)</FormLabel>
+                        <FormLabel>Nome Completo</FormLabel>
                         <FormControl>
-                          <Input placeholder="(00) 00000-0000" {...field} />
+                          <Input placeholder="Seu nome completo" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
-                    name="service"
+                    name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Serviço de Interesse</FormLabel>
-                        <FormDescription>
-                          Selecione o serviço que você tem interesse
-                        </FormDescription>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Selecione um serviço" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent className="max-h-80">
-                            <SelectGroup>
-                              <SelectLabel>Serviços</SelectLabel>
-                              {services.map((service) => (
-                                <SelectItem key={service.id} value={service.id}>
-                                  {service.label}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Mensagem</FormLabel>
+                        <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Textarea 
-                            placeholder="Como podemos ajudar seu negócio?" 
-                            className="min-h-[120px]" 
-                            {...field} 
-                          />
+                          <Input type="email" placeholder="seu@email.com" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+                </div>
 
-                  <Button type="submit" className="btn-primary w-full" disabled={isSubmitting}>
-                    {isSubmitting ? "Enviando..." : "Enviar Mensagem"}
-                  </Button>
-                </form>
-              </Form>
-            </div>
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Telefone (opcional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="(00) 00000-0000" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="service"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Serviço de Interesse</FormLabel>
+                      <FormDescription>
+                        Selecione o serviço que você tem interesse
+                      </FormDescription>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione um serviço" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="max-h-80">
+                          <SelectGroup>
+                            <SelectLabel>Serviços</SelectLabel>
+                            {services.map((service) => (
+                              <SelectItem key={service.id} value={service.id}>
+                                {service.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="message"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mensagem</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Como podemos ajudar seu negócio?" 
+                          className="min-h-[120px]" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button type="submit" className="btn-primary w-full" disabled={isSubmitting}>
+                  {isSubmitting ? "Enviando..." : "Enviar Mensagem"}
+                </Button>
+              </form>
+            </Form>
           </div>
           
-          <div>
-            <div className="bg-white dark:bg-gray-800/70 shadow-sm rounded-xl p-8 relative z-10 h-full">
-              <h3 className="text-2xl font-semibold mb-6">Informações de Contato</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 flex flex-col justify-between">
+            <div>
+              <h3 className="text-xl font-semibold mb-6 text-gray-900 dark:text-gray-100">Informações de Contato</h3>
               
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="flex items-start gap-4">
                   <div className="bg-i9-blue/10 dark:bg-i9-blue/20 rounded-full p-3">
                     <Mail className="w-5 h-5 text-i9-blue" />
@@ -329,83 +310,63 @@ const ContactForm = () => {
                 </div>
                 
                 <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <h4 className="font-medium mb-4">Compartilhar</h4>
-                  <div className="flex gap-3 flex-wrap">
+                  <h4 className="font-medium mb-4">Compartilhe</h4>
+                  <div className="flex flex-wrap gap-3">
                     <button 
-                      onClick={() => handleShareSocial("facebook")} 
-                      className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors"
+                      onClick={() => handleShare('facebook')}
+                      className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center text-white shadow-sm hover:shadow transition-all"
                       aria-label="Compartilhar no Facebook"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700 dark:text-gray-300">
-                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
                       </svg>
                     </button>
-                    <button 
-                      onClick={() => handleShareSocial("twitter")} 
-                      className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors" 
+                    <button
+                      onClick={() => handleShare('twitter')}
+                      className="w-10 h-10 rounded-full bg-sky-500 hover:bg-sky-600 flex items-center justify-center text-white shadow-sm hover:shadow transition-all"
                       aria-label="Compartilhar no Twitter"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700 dark:text-gray-300">
-                        <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
                       </svg>
                     </button>
-                    <button 
-                      onClick={() => handleShareSocial("linkedin")} 
-                      className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors" 
+                    <button
+                      onClick={() => handleShare('linkedin')}
+                      className="w-10 h-10 rounded-full bg-blue-700 hover:bg-blue-800 flex items-center justify-center text-white shadow-sm hover:shadow transition-all"
                       aria-label="Compartilhar no LinkedIn"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700 dark:text-gray-300">
-                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                        <rect x="2" y="9" width="4" height="12" />
-                        <circle cx="4" cy="4" r="2" />
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fillRule="evenodd" d="M19.7 3H4.3A1.3 1.3 0 003 4.3v15.4A1.3 1.3 0 004.3 21h15.4a1.3 1.3 0 001.3-1.3V4.3A1.3 1.3 0 0019.7 3zM8.339 18.338H5.667v-8.59h2.672v8.59zM7.004 8.574a1.548 1.548 0 11-3.096 0 1.548 1.548 0 013.096 0zm11.335 9.764H15.67v-4.177c0-.996-.017-2.278-1.387-2.278-1.389 0-1.601 1.086-1.601 2.206v4.249h-2.667v-8.59h2.559v1.174h.037c.356-.675 1.227-1.387 2.526-1.387 2.703 0 3.203 1.779 3.203 4.092v4.711z" clipRule="evenodd" />
                       </svg>
                     </button>
-                    <button 
-                      onClick={() => handleShareSocial("whatsapp")} 
-                      className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors" 
+                    <button
+                      onClick={() => handleShare('whatsapp')}
+                      className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center text-white shadow-sm hover:shadow transition-all"
                       aria-label="Compartilhar no WhatsApp"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700 dark:text-gray-300">
-                        <path d="M17.498 14.382c-.301-.15-1.767-.867-2.04-.966-.273-.101-.473-.15-.673.15-.2.301-.767.966-.94 1.164-.173.199-.347.223-.646.075-.3-.15-1.267-.465-2.414-1.485-.893-.795-1.494-1.776-1.67-2.076-.174-.301-.018-.465.13-.615.134-.135.301-.353.452-.529.149-.176.198-.301.297-.502.099-.2.05-.374-.025-.524-.075-.15-.672-1.62-.922-2.219-.239-.582-.487-.501-.673-.51-.172-.009-.371-.01-.571-.01-.2 0-.523.074-.797.359-.273.284-1.045.942-1.045 2.299s1.07 2.669 1.22 2.87c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.571-.347z" />
-                        <path d="M13.458 24h-.08a11.947 11.947 0 01-6.108-1.688l-.439-.262-4.56 1.229 1.245-4.545-.287-.455A11.934 11.934 0 011 11.882C1 5.335 6.335 0 12.882 0c3.18 0 6.15 1.232 8.4 3.472a11.717 11.717 0 013.443 8.347c0 6.548-5.335 11.882-11.267 11.882z" />
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fillRule="evenodd" d="M20.11 3.89C17.95 1.72 14.98 0.5 11.85 0.5C5.5 0.5 0.32 5.68 0.32 12.04C0.32 14.25 0.95 16.41 2.11 18.28L0.25 24L6.11 22.18C7.9 23.23 9.89 23.79 11.92 23.79H11.93C18.29 23.79 23.5 18.61 23.5 12.25C23.5 9.13 22.27 6.15 20.11 3.89ZM11.85 21.83C10.09 21.83 8.36 21.3 6.85 20.29L6.5 20.08L2.97 21.14L4.05 17.72L3.82 17.36C2.71 15.79 2.13 13.95 2.13 12.04C2.13 6.72 6.53 2.32 11.86 2.32C14.46 2.32 16.91 3.34 18.69 5.13C20.47 6.91 21.5 9.36 21.49 11.96C21.49 17.28 17.08 21.83 11.85 21.83ZM17.05 14.53C16.76 14.39 15.41 13.72 15.14 13.63C14.87 13.54 14.67 13.5 14.47 13.79C14.27 14.08 13.75 14.7 13.58 14.9C13.41 15.1 13.24 15.12 12.95 14.98C12.66 14.84 11.78 14.56 10.74 13.63C9.92 12.9 9.37 12.02 9.2 11.73C9.03 11.44 9.18 11.28 9.32 11.14C9.45 11.01 9.61 10.8 9.75 10.63C9.89 10.46 9.94 10.33 10.03 10.13C10.12 9.94 10.07 9.77 10 9.63C9.94 9.5 9.38 8.15 9.14 7.57C8.9 7 8.66 7.08 8.48 7.07C8.31 7.06 8.11 7.06 7.91 7.06C7.71 7.06 7.39 7.13 7.12 7.42C6.85 7.71 6.15 8.38 6.15 9.73C6.15 11.08 7.13 12.38 7.27 12.58C7.41 12.78 9.36 15.78 12.33 17C13.09 17.33 13.68 17.52 14.14 17.67C14.9 17.91 15.6 17.88 16.15 17.8C16.77 17.72 17.85 17.13 18.09 16.45C18.33 15.77 18.33 15.19 18.26 15.08C18.19 14.97 17.99 14.91 17.7 14.77C17.41 14.64 17.05 14.53 17.05 14.53Z" clipRule="evenodd" />
                       </svg>
                     </button>
-                    <button 
-                      onClick={() => handleShareSocial("blog")}
-                      className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors"
-                      aria-label="Ver Blog"
+                    <button
+                      onClick={() => handleShare('email')}
+                      className="w-10 h-10 rounded-full bg-gray-500 hover:bg-gray-600 flex items-center justify-center text-white shadow-sm hover:shadow transition-all"
+                      aria-label="Compartilhar por E-mail"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700 dark:text-gray-300">
-                        <path d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
-                        <path d="M17 9H9.5a.5.5 0 0 0 0 1H17a.5.5 0 0 0 0-1zM15 12H9.5a.5.5 0 0 0 0 1H15a.5.5 0 0 0 0-1zM13 15H9.5a.5.5 0 0 0 0 1H13a.5.5 0 0 0 0-1z" />
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
-                    </button>
-                    <button 
-                      onClick={() => handleShareSocial("testimonials")}
-                      className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors"
-                      aria-label="Ver Depoimentos"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700 dark:text-gray-300">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                      </svg>
-                    </button>
-                    <button 
-                      className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors flex items-center justify-center cursor-pointer"
-                      onClick={() => {
-                        if (navigator.share) {
-                          navigator.share({
-                            title: 'i9 Agência de Marketing Digital',
-                            text: 'Confira a i9 Agência de Marketing Digital',
-                            url: window.location.href,
-                          })
-                          .catch((error) => console.log('Erro ao compartilhar', error));
-                        }
-                      }}
-                      aria-label="Compartilhar"
-                    >
-                      <Share2 className="w-5 h-5 text-gray-700 dark:text-gray-300" />
                     </button>
                   </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-8 flex flex-col space-y-4">
+              <div className="mt-4">
+                <h4 className="text-lg font-medium mb-3 text-gray-900 dark:text-gray-100">O que nossos clientes dizem</h4>
+                <div className="flex justify-start">
+                  <ContactTestimonialsButton />
                 </div>
               </div>
             </div>
@@ -413,7 +374,6 @@ const ContactForm = () => {
         </div>
       </div>
       
-      {/* Testimonials Modal */}
       <TestimonialsModal open={testimonialsOpen} onOpenChange={setTestimonialsOpen} />
     </section>
   );
