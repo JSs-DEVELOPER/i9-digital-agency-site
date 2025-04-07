@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { TestimonialsModal } from "@/components/Testimonials";
 import { supabase } from "@/integrations/supabase/client";
+import { ContactTestimonialsButton } from "@/components/ContactTestimonialsButton";
 
 const formSchema = z.object({
   name: z.string().min(2, {
