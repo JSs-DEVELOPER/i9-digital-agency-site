@@ -102,3 +102,60 @@ export interface BrazilianHoliday {
   created_at: string;
   updated_at: string;
 }
+
+// Define the Database interface that will be used for typing the Supabase client
+export interface Database {
+  public: {
+    Tables: {
+      appointments: {
+        Row: Appointment;
+        Insert: Omit<Appointment, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<Appointment, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      contact_submissions: {
+        Row: ContactSubmission;
+        Insert: Omit<ContactSubmission, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<ContactSubmission, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      blog_posts: {
+        Row: Omit<BlogPost, 'categories' | 'tags'>;
+        Insert: Omit<BlogPost, 'id' | 'created_at' | 'updated_at' | 'categories' | 'tags'>;
+        Update: Partial<Omit<BlogPost, 'id' | 'created_at' | 'updated_at' | 'categories' | 'tags'>>;
+      };
+      blog_categories: {
+        Row: BlogCategory;
+        Insert: Omit<BlogCategory, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<BlogCategory, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      blog_tags: {
+        Row: BlogTag;
+        Insert: Omit<BlogTag, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<BlogTag, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      testimonials: {
+        Row: Testimonial;
+        Insert: Omit<Testimonial, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<Testimonial, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      services: {
+        Row: Service;
+        Insert: Omit<Service, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<Service, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      services_categories: {
+        Row: ServiceCategory;
+        Insert: Omit<ServiceCategory, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<ServiceCategory, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      brazilian_holidays: {
+        Row: BrazilianHoliday;
+        Insert: Omit<BrazilianHoliday, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<BrazilianHoliday, 'id' | 'created_at' | 'updated_at'>>;
+      };
+    };
+    Views: {};
+    Functions: {};
+    Enums: {};
+    CompositeTypes: {};
+  };
+}
