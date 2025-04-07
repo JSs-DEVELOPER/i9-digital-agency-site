@@ -78,6 +78,33 @@ export type Database = {
         }
         Relationships: []
       }
+      bing_microsoft_ads: {
+        Row: {
+          created_at: string
+          id: string
+          observations: string | null
+          pixel_id: string | null
+          script: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          observations?: string | null
+          pixel_id?: string | null
+          script?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          observations?: string | null
+          pixel_id?: string | null
+          script?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       blog_categories: {
         Row: {
           created_at: string
@@ -273,6 +300,36 @@ export type Database = {
         }
         Relationships: []
       }
+      codigos_universais: {
+        Row: {
+          created_at: string
+          html: string | null
+          id: string
+          observations: string | null
+          script: string | null
+          script_extra: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          html?: string | null
+          id?: string
+          observations?: string | null
+          script?: string | null
+          script_extra?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          html?: string | null
+          id?: string
+          observations?: string | null
+          script?: string | null
+          script_extra?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_submissions: {
         Row: {
           created_at: string
@@ -305,6 +362,63 @@ export type Database = {
           phone?: string | null
           service?: string | null
           status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      cookie_rastreio: {
+        Row: {
+          created_at: string
+          html: string | null
+          id: string
+          observations: string | null
+          script: string | null
+          script_extra: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          html?: string | null
+          id?: string
+          observations?: string | null
+          script?: string | null
+          script_extra?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          html?: string | null
+          id?: string
+          observations?: string | null
+          script?: string | null
+          script_extra?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      facebook_instagram: {
+        Row: {
+          created_at: string
+          id: string
+          observations: string | null
+          pixel_id: string | null
+          script: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          observations?: string | null
+          pixel_id?: string | null
+          script?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          observations?: string | null
+          pixel_id?: string | null
+          script?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -342,6 +456,96 @@ export type Database = {
         }
         Relationships: []
       }
+      google_ads: {
+        Row: {
+          created_at: string
+          id: string
+          observations: string | null
+          pixel_id: string | null
+          script: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          observations?: string | null
+          pixel_id?: string | null
+          script?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          observations?: string | null
+          pixel_id?: string | null
+          script?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      google_analytics4: {
+        Row: {
+          created_at: string
+          id: string
+          observations: string | null
+          pixel_id: string | null
+          script: string | null
+          script_backup: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          observations?: string | null
+          pixel_id?: string | null
+          script?: string | null
+          script_backup?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          observations?: string | null
+          pixel_id?: string | null
+          script?: string | null
+          script_backup?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      google_gtm: {
+        Row: {
+          created_at: string
+          gtm_head_snippet: string | null
+          gtm_tag_id: string | null
+          id: string
+          observations: string | null
+          script_backup: string | null
+          tag_manager_script: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          gtm_head_snippet?: string | null
+          gtm_tag_id?: string | null
+          id?: string
+          observations?: string | null
+          script_backup?: string | null
+          tag_manager_script?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          gtm_head_snippet?: string | null
+          gtm_tag_id?: string | null
+          id?: string
+          observations?: string | null
+          script_backup?: string | null
+          tag_manager_script?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       hero_section: {
         Row: {
           background_image: string | null
@@ -371,6 +575,36 @@ export type Database = {
           id?: string
           subtitle?: string | null
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      linkedin: {
+        Row: {
+          created_at: string
+          id: string
+          insight_tag: string | null
+          linkedin_id: string | null
+          observations: string | null
+          script: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          insight_tag?: string | null
+          linkedin_id?: string | null
+          observations?: string | null
+          script?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          insight_tag?: string | null
+          linkedin_id?: string | null
+          observations?: string | null
+          script?: string | null
           updated_at?: string
         }
         Relationships: []
