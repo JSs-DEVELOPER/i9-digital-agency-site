@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
+import { supabase } from "@/integrations/supabase/client"
 
 interface AppointmentModalProps {
   open: boolean
@@ -74,6 +75,8 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
     service: "",
     message: ""
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [dbHolidays, setDbHolidays] = useState<{holiday_date: string, name: string}[]>([])
   
   // Update selected service when prop changes
   useEffect(() => {
@@ -81,6 +84,30 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
       setFormData(prev => ({ ...prev, service: selectedService }))
     }
   }, [selectedService, open])
+  
+  // Fetch holidays from Supabase
+  useEffect(() => {
+    const fetchHolidays = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('brazilian_holidays')
+          .select('holiday_date, name')
+        
+        if (error) {
+          console.error('Error fetching holidays:', error)
+          return
+        }
+        
+        if (data) {
+          setDbHolidays(data)
+        }
+      } catch (error) {
+        console.error('Exception fetching holidays:', error)
+      }
+    }
+    
+    fetchHolidays()
+  }, [])
   
   const availableTimes = [
     "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"
@@ -96,14 +123,23 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Resetar horas para comparação apenas de datas
     
+    // Check DB holidays
+    const isDbHoliday = dbHolidays.some(holiday => {
+      const holidayDate = new Date(holiday.holiday_date);
+      return date.getDate() === holidayDate.getDate() && 
+             date.getMonth() === holidayDate.getMonth() && 
+             date.getFullYear() === holidayDate.getFullYear();
+    });
+    
     return (
       isWeekend(date) || // Desabilitar fins de semana (sábado e domingo)
       isBefore(date, today) || // Desabilitar datas passadas
-      isHoliday(date) // Desabilitar feriados
+      isHoliday(date) || // Desabilitar feriados codificados
+      isDbHoliday // Desabilitar feriados do banco de dados
     );
   }
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!date || !timeSlot) {
@@ -130,24 +166,58 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
       return
     }
     
-    // Here you would actually check for duplicate appointments in a real backend
-    // For now we'll just simulate a successful submission
-    toast({
-      title: "Agendamento realizado!",
-      description: `Sua consultoria foi agendada para ${format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} às ${timeSlot}.`,
-    })
+    setIsSubmitting(true)
     
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      service: "",
-      message: ""
-    })
-    setDate(undefined)
-    setTimeSlot(null)
-    onOpenChange(false)
+    try {
+      // Insert into Supabase
+      const { data, error } = await supabase
+        .from('appointments')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          service: formData.service,
+          message: formData.message,
+          appointment_date: selectedDate.toISOString(),
+          status: 'pending'
+        })
+        .select()
+      
+      if (error) {
+        console.error('Error submitting appointment:', error)
+        toast({
+          title: "Erro",
+          description: "Ocorreu um erro ao agendar. Por favor, tente novamente.",
+          variant: "destructive"
+        })
+      } else {
+        toast({
+          title: "Agendamento realizado!",
+          description: `Sua consultoria foi agendada para ${format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} às ${timeSlot}.`,
+        })
+        
+        // Reset form
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          service: "",
+          message: ""
+        })
+        setDate(undefined)
+        setTimeSlot(null)
+        onOpenChange(false)
+      }
+    } catch (error) {
+      console.error('Exception submitting appointment:', error)
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao agendar. Por favor, tente novamente.",
+        variant: "destructive"
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
   
   return (
@@ -293,8 +363,8 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
             </div>
           </div>
           
-          <Button type="submit" className="btn-primary w-full">
-            Confirmar Agendamento
+          <Button type="submit" className="btn-primary w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Processando..." : "Confirmar Agendamento"}
           </Button>
         </form>
       </DialogContent>

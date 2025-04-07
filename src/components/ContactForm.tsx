@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TestimonialsModal } from "@/components/Testimonials";
+import { supabase } from "@/integrations/supabase/client";
 
 // Form schema
 const formSchema = z.object({
@@ -98,19 +99,47 @@ const ContactForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     
-    // Simulate form submission
-    setTimeout(() => {
-      console.log(values);
+    try {
+      // Submit to Supabase
+      const { data, error } = await supabase
+        .from('contact_submissions')
+        .insert({
+          name: values.name,
+          email: values.email,
+          phone: values.phone || null,
+          service: values.service || null,
+          message: values.message,
+          status: 'unread'
+        })
+        .select()
+      
+      if (error) {
+        console.error('Error submitting contact form:', error)
+        toast({
+          title: "Erro",
+          description: "Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente.",
+          variant: "destructive"
+        })
+      } else {
+        toast({
+          title: "Mensagem enviada com sucesso!",
+          description: "Entraremos em contato em breve.",
+        })
+        form.reset();
+      }
+    } catch (error) {
+      console.error('Exception submitting contact form:', error)
       toast({
-        title: "Mensagem enviada com sucesso!",
-        description: "Entraremos em contato em breve.",
-      });
-      form.reset();
+        title: "Erro",
+        description: "Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente.",
+        variant: "destructive"
+      })
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   }
 
   const handleShareSocial = (platform: string) => {
