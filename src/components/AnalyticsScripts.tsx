@@ -1,7 +1,6 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Helmet } from 'react-helmet';
 
 interface AnalyticsScript {
   script?: string | null;
@@ -125,62 +124,95 @@ export const AnalyticsScripts = () => {
     fetchAnalyticsScripts();
   }, []);
 
-  return (
-    <Helmet>
-      {/* Google Analytics 4 */}
-      {analyticsData.google_analytics?.script && (
-        <script dangerouslySetInnerHTML={{ __html: analyticsData.google_analytics.script }} />
-      )}
+  // Inject scripts directly into the document head
+  useEffect(() => {
+    // Function to create and inject a script element
+    const injectScript = (scriptContent: string) => {
+      const scriptEl = document.createElement('script');
+      scriptEl.innerHTML = scriptContent;
+      document.head.appendChild(scriptEl);
+      return scriptEl;
+    };
 
-      {/* Google Ads */}
-      {analyticsData.google_ads?.script && (
-        <script dangerouslySetInnerHTML={{ __html: analyticsData.google_ads.script }} />
-      )}
+    // Function to create and inject HTML content (for divs, etc.)
+    const injectHTML = (htmlContent: string) => {
+      const containerEl = document.createElement('div');
+      containerEl.style.display = 'none';
+      containerEl.innerHTML = htmlContent;
+      document.body.appendChild(containerEl);
+      return containerEl;
+    };
 
-      {/* Facebook/Instagram */}
-      {analyticsData.facebook_instagram?.script && (
-        <script dangerouslySetInnerHTML={{ __html: analyticsData.facebook_instagram.script }} />
-      )}
+    const injectedElements: (HTMLScriptElement | HTMLDivElement)[] = [];
+    
+    // Add Google Analytics script
+    if (analyticsData.google_analytics?.script) {
+      injectedElements.push(injectScript(analyticsData.google_analytics.script));
+    }
 
-      {/* Bing/Microsoft Ads */}
-      {analyticsData.bing_microsoft?.script && (
-        <script dangerouslySetInnerHTML={{ __html: analyticsData.bing_microsoft.script }} />
-      )}
+    // Add Google Ads script
+    if (analyticsData.google_ads?.script) {
+      injectedElements.push(injectScript(analyticsData.google_ads.script));
+    }
 
-      {/* LinkedIn */}
-      {analyticsData.linkedin?.script && (
-        <script dangerouslySetInnerHTML={{ __html: analyticsData.linkedin.script }} />
-      )}
+    // Add Facebook/Instagram script
+    if (analyticsData.facebook_instagram?.script) {
+      injectedElements.push(injectScript(analyticsData.facebook_instagram.script));
+    }
 
-      {/* Google Tag Manager */}
-      {analyticsData.google_gtm?.gtm_head_snippet && (
-        <script dangerouslySetInnerHTML={{ __html: analyticsData.google_gtm.gtm_head_snippet }} />
-      )}
-      {analyticsData.google_gtm?.tag_manager_script && (
-        <script dangerouslySetInnerHTML={{ __html: analyticsData.google_gtm.tag_manager_script }} />
-      )}
+    // Add Bing/Microsoft script
+    if (analyticsData.bing_microsoft?.script) {
+      injectedElements.push(injectScript(analyticsData.bing_microsoft.script));
+    }
 
-      {/* Cookie Tracking */}
-      {analyticsData.cookie_rastreio?.script && (
-        <script dangerouslySetInnerHTML={{ __html: analyticsData.cookie_rastreio.script }} />
-      )}
-      {analyticsData.cookie_rastreio?.html && (
-        <div dangerouslySetInnerHTML={{ __html: analyticsData.cookie_rastreio.html }} />
-      )}
-      {analyticsData.cookie_rastreio?.script_extra && (
-        <script dangerouslySetInnerHTML={{ __html: analyticsData.cookie_rastreio.script_extra }} />
-      )}
+    // Add LinkedIn script
+    if (analyticsData.linkedin?.script) {
+      injectedElements.push(injectScript(analyticsData.linkedin.script));
+    }
 
-      {/* Universal Codes */}
-      {analyticsData.codigos_universais?.script && (
-        <script dangerouslySetInnerHTML={{ __html: analyticsData.codigos_universais.script }} />
-      )}
-      {analyticsData.codigos_universais?.html && (
-        <div dangerouslySetInnerHTML={{ __html: analyticsData.codigos_universais.html }} />
-      )}
-      {analyticsData.codigos_universais?.script_extra && (
-        <script dangerouslySetInnerHTML={{ __html: analyticsData.codigos_universais.script_extra }} />
-      )}
-    </Helmet>
-  );
+    // Add Google Tag Manager scripts
+    if (analyticsData.google_gtm?.gtm_head_snippet) {
+      injectedElements.push(injectScript(analyticsData.google_gtm.gtm_head_snippet));
+    }
+    
+    if (analyticsData.google_gtm?.tag_manager_script) {
+      injectedElements.push(injectScript(analyticsData.google_gtm.tag_manager_script));
+    }
+
+    // Add Cookie Tracking scripts and HTML
+    if (analyticsData.cookie_rastreio?.script) {
+      injectedElements.push(injectScript(analyticsData.cookie_rastreio.script));
+    }
+    
+    if (analyticsData.cookie_rastreio?.html) {
+      injectedElements.push(injectHTML(analyticsData.cookie_rastreio.html));
+    }
+    
+    if (analyticsData.cookie_rastreio?.script_extra) {
+      injectedElements.push(injectScript(analyticsData.cookie_rastreio.script_extra));
+    }
+
+    // Add Universal Code scripts and HTML
+    if (analyticsData.codigos_universais?.script) {
+      injectedElements.push(injectScript(analyticsData.codigos_universais.script));
+    }
+    
+    if (analyticsData.codigos_universais?.html) {
+      injectedElements.push(injectHTML(analyticsData.codigos_universais.html));
+    }
+    
+    if (analyticsData.codigos_universais?.script_extra) {
+      injectedElements.push(injectScript(analyticsData.codigos_universais.script_extra));
+    }
+
+    // Cleanup function to remove all injected elements when component unmounts
+    return () => {
+      injectedElements.forEach((element) => {
+        element.parentNode?.removeChild(element);
+      });
+    };
+  }, [analyticsData]);
+
+  // The component doesn't render anything visible
+  return null;
 };
