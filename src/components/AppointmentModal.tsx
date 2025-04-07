@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
+import { AlertCircle } from "lucide-react"
 
 interface AppointmentModalProps {
   open: boolean
@@ -149,6 +150,8 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dbHolidays, setDbHolidays] = useState<{holiday_date: string, name: string}[]>([]);
   const [feriadosMoveis, setFeriadosMoveis] = useState<Date[]>([]);
+  const [unavailableSlots, setUnavailableSlots] = useState<string[]>([]);
+  const [timeSlotError, setTimeSlotError] = useState<string | null>(null);
   
   // Update selected service when prop changes
   useEffect(() => {
@@ -191,6 +194,58 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
     
     fetchHolidays();
   }, []);
+  
+  // Fetch unavailable slots when date changes
+  useEffect(() => {
+    if (!date) {
+      setUnavailableSlots([]);
+      return;
+    }
+    
+    const fetchUnavailableSlots = async () => {
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+      
+      try {
+        const { data, error } = await supabase
+          .from('appointments')
+          .select('appointment_date')
+          .gte('appointment_date', startOfDay.toISOString())
+          .lte('appointment_date', endOfDay.toISOString())
+          .neq('status', 'canceled');
+        
+        if (error) {
+          console.error('Error fetching booked slots:', error);
+          return;
+        }
+        
+        if (data) {
+          // Extract time slots from appointment dates
+          const bookedSlots = data.map(item => {
+            const appointmentDate = new Date(item.appointment_date);
+            return `${appointmentDate.getHours().toString().padStart(2, '0')}:${appointmentDate.getMinutes().toString().padStart(2, '0')}`;
+          });
+          
+          setUnavailableSlots(bookedSlots);
+          
+          // If current selected time is now unavailable, clear it
+          if (timeSlot && bookedSlots.includes(timeSlot)) {
+            setTimeSlot(null);
+            setTimeSlotError(`O horário ${timeSlot} não está mais disponível para esta data.`);
+          } else {
+            setTimeSlotError(null);
+          }
+        }
+      } catch (error) {
+        console.error('Exception fetching booked slots:', error);
+      }
+    };
+    
+    fetchUnavailableSlots();
+  }, [date]);
   
   const availableTimes = [
     "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"
@@ -327,9 +382,39 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
       return;
     }
     
+    // Verificar se o horário não está já agendado
+    if (unavailableSlots.includes(timeSlot)) {
+      setTimeSlotError(`O horário ${timeSlot} já está agendado. Por favor, escolha outro horário.`);
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
+      // Verify availability using the database function
+      const { data: availabilityData, error: availabilityError } = await supabase
+        .rpc('check_appointment_availability', { 
+          check_date: selectedDate.toISOString() 
+        });
+      
+      if (availabilityError) {
+        console.error('Error checking availability:', availabilityError);
+        toast({
+          title: "Erro",
+          description: "Ocorreu um erro ao verificar disponibilidade. Por favor, tente novamente.",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // If not available, show error
+      if (!availabilityData) {
+        setTimeSlotError(`O horário ${timeSlot} já está agendado. Por favor, escolha outro horário.`);
+        setIsSubmitting(false);
+        return;
+      }
+      
       // Insert into Supabase
       const { data, error } = await supabase
         .from('appointments')
@@ -367,6 +452,7 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
         });
         setDate(undefined);
         setTimeSlot(null);
+        setTimeSlotError(null);
         onOpenChange(false);
       }
     } catch (error) {
@@ -533,26 +619,49 @@ export const AppointmentModal = ({ open, onOpenChange, services, selectedService
                       const selectedDateSP = new Date(selectedDate.getTime() - (3 * 60 * 60 * 1000));
                       const isPastTime = isBefore(selectedDateSP, nowSP);
                       
+                      // Verificar se o horário já está agendado
+                      const isUnavailable = unavailableSlots.includes(time);
+                      const isDisabled = isPastTime || isUnavailable;
+                      
                       return (
                         <Button
                           key={time}
                           type="button"
                           variant={timeSlot === time ? "default" : "outline"}
-                          onClick={() => !isPastTime && setTimeSlot(time)}
-                          disabled={isPastTime}
-                          className={isPastTime ? "opacity-50" : ""}
+                          onClick={() => !isDisabled && setTimeSlot(time)}
+                          disabled={isDisabled}
+                          className={`
+                            ${isDisabled ? "opacity-50" : ""}
+                            ${isUnavailable ? "bg-gray-200 dark:bg-gray-700 border-red-300 dark:border-red-700" : ""}
+                          `}
                         >
                           {time}
+                          {isUnavailable && (
+                            <span className="absolute -top-1 -right-1">
+                              <AlertCircle className="h-4 w-4 text-red-500" />
+                            </span>
+                          )}
                         </Button>
                       );
                     })}
                   </div>
+                  
+                  {timeSlotError && (
+                    <div className="mt-2 text-sm text-red-500 flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4" />
+                      {timeSlotError}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           </div>
           
-          <Button type="submit" className="btn-primary w-full" disabled={isSubmitting}>
+          <Button 
+            type="submit" 
+            className="btn-primary w-full" 
+            disabled={isSubmitting || !date || !timeSlot || unavailableSlots.includes(timeSlot || '')}
+          >
             {isSubmitting ? "Processando..." : "Confirmar Agendamento"}
           </Button>
         </form>
